@@ -38,7 +38,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
 
   String toSelect = '';
   String fromSelect = '';
-  late DateTime selectedDate = DateTime.now();
+  late String selectedDate = "";
   int selectedDateIndex = 0;
   // String formattedSelectedDate = '';
 
@@ -258,7 +258,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
                             index,
                           );
                       dPrint("Date String from index $index: $dateString");
-                      selectedDate = DateTime.parse(dateString);
+                      selectedDate = dateString;
                       dPrint("Parsed DateTime: $selectedDate");
                     });
                     await _getAvailableShuttles();
@@ -402,7 +402,10 @@ class _BookARideScreenState extends State<BookARideScreen> {
                     final departureTime = ride.schedules.departureTime;
                     final arrivalTime = ride.schedules.arrivalTime;
                     final timeRange = '$departureTime - $arrivalTime';
-                    final date = ride.schedules.date;
+                    final date = selectedDate;
+
+                    dPrint("Book a ride Date -? $date");
+                    dPrint("Book a ride DEP Date -? $departureTime");
 
                     // final firstScaduleDate = firstSchedule!.date;
 
@@ -434,7 +437,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
                               'Seates': data,
                               'source': toSelect,
                               'destination': fromSelect,
-                              'date': selectedDate,
+                              'date': DateTime.parse(selectedDate),
                               'departureTime': departureTime,
                               'arrivalTime': arrivalTime,
                             },
@@ -443,83 +446,89 @@ class _BookARideScreenState extends State<BookARideScreen> {
                           dPrint("book a ride screen navite -> $e");
                         }
                       },
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: AppSizes.paddingAllMedium,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      /// [Soure] to [Destination] Ticket
-                                      Wrap(
-                                        crossAxisAlignment:
-                                            WrapCrossAlignment.center,
-                                        spacing: 4, // Equivalent to Gap.w4
-                                        runSpacing:
-                                            4, // Optional vertical spacing between lines
-                                        children: [
-                                          Text(
-                                            firstStop.capitalizeFirstOfEach,
-                                            style: AppText.h3,
-                                          ),
-                                          ArrowIcon(),
-                                          Text(
-                                            lastStop.capitalizeFirstOfEach,
-                                            style: AppText.h3,
-                                          ),
-                                        ],
-                                      ),
-
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            timeRange,
-                                            style: const TextStyle(
-                                              color: AppColors.secondary,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: AppSizes.paddingAllMedium,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        /// [Soure] to [Destination] Ticket
+                                        Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          spacing: 4, // Equivalent to Gap.w4
+                                          runSpacing:
+                                              4, // Optional vertical spacing between lines
+                                          children: [
+                                            Text(
+                                              firstStop.capitalizeFirstOfEach,
+                                              style: AppText.h3,
                                             ),
-                                          ),
-                                          Text(
-                                            seatsText,
-                                            style: const TextStyle(
-                                              color: AppColors.secondary,
+                                            ArrowIcon(),
+                                            Text(
+                                              lastStop.capitalizeFirstOfEach,
+                                              style: AppText.h3,
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
 
-                                      Gap.h12,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              timeRange,
+                                              style: const TextStyle(
+                                                color: AppColors.secondary,
+                                              ),
+                                            ),
+                                            Text(
+                                              seatsText,
+                                              style: const TextStyle(
+                                                color: AppColors.secondary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
 
-                                      /// [Bus Name] Shuttle
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            busName.capitalizeFirstLetter(),
-                                            style: AppText.smallRegular,
-                                          ),
-                                          _goldButton("Book", onPressed: () {}),
-                                        ],
-                                      ),
-                                    ],
+                                        Gap.h12,
+
+                                        /// [Bus Name] Shuttle
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              busName.capitalizeFirstLetter(),
+                                              style: AppText.smallRegular,
+                                            ),
+                                            _goldButton(
+                                              "Book",
+                                              onPressed: () {},
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          if (!isLastItem) // Only add divider if not the last item
-                            Divider(
-                              color: AppColors.secondary,
-                              height: 16, // Adjust height as needed
-                              thickness: 1,
-                            ),
-                        ],
+                            if (!isLastItem) // Only add divider if not the last item
+                              Divider(
+                                color: AppColors.secondary,
+                                height: 16, // Adjust height as needed
+                                thickness: 1,
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),

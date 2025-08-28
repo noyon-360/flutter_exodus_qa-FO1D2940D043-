@@ -15,6 +15,8 @@ class HomeController extends BaseController {
   HomeController(this._appStateService, this._getHomeDataUsecase);
 
   final ValueNotifier<UserData?> userDataNotifier = ValueNotifier(null);
+  final ValueNotifier<int?> rideLeft = ValueNotifier(0);
+  final ValueNotifier<int?> rewardPoint = ValueNotifier(0);
 
   Future<UserData?> getUserData() async {
     setLoading(true);
@@ -26,7 +28,21 @@ class HomeController extends BaseController {
       result.fold((failure) {}, (data) {
         userDataNotifier.value = data.data;
         _appStateService.setUser(data.data);
-        dPrint("User Data Print -> ${data.data.user.email}");
+
+        // Count tickets with status 'panding'
+        final pendingCount =
+            data.data.ticket
+                .where((ticket) => ticket.status == 'pending')
+                .length;
+
+        dPrint("User Data Ticket Status -> $pendingCount");
+        rideLeft.value = pendingCount;
+
+        // If all tickets are complete, set rewardPoint to 1
+        final allComplete =
+            data.data.ticket.isNotEmpty &&
+            data.data.ticket.every((ticket) => ticket.status == 'completed');
+        rewardPoint.value = allComplete ? 1 : 0;
 
         return data;
       });

@@ -29,7 +29,6 @@ class BookingSummaryScreen extends StatefulWidget {
   final double subtotal;
   final double tax;
   final double total;
-  // final String userId;
   final String ticketId;
   final String reserveBusId;
 
@@ -45,7 +44,6 @@ class BookingSummaryScreen extends StatefulWidget {
     required this.subtotal,
     required this.tax,
     required this.total,
-    // required this.userId,
     required this.ticketId,
     required this.reserveBusId,
   });
@@ -321,7 +319,9 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
           _showSnackbar("Invalid payment method");
       }
     } catch (e) {
-      _showSnackbar("An error occurred: ${e.toString()}");
+      if (mounted) {
+        _showSnackbar("An error occurred: ${e.toString()}");
+      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -339,29 +339,36 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
         amount: widget.total,
       );
 
+      if (!mounted) return;
+
       result.handle(
         onSuccess: (data) async {
           dPrint("Result in payment -> ${data.data}");
           final clientSecret = data;
 
           dPrint("clientSecret -> ${clientSecret}");
-          setState(() => _isLoading = false);
+          if (mounted) {
+            setState(() => _isLoading = false);
+          }
 
           final paymentResult = await _paymentController.processPayment(
             clientSecret: clientSecret.data.transactionId,
           );
-          dPrint("Payment resutl -> $paymentResult");
+          dPrint("Payment result -> $paymentResult");
 
           paymentResult.fold(
             (failure) {
-              _showSnackbar(failure.message);
+              if (mounted) {
+                _showSnackbar(failure.message);
+              }
               return;
             },
             (data) async {
-              // final paymentIntent = data;
               final confirmResult = await _paymentController.confirmPayment(
                 data.data.id,
               );
+
+              if (!mounted) return;
               setState(() => _isLoading = false);
 
               confirmResult.fold(
@@ -371,63 +378,26 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
                 },
                 (data) {
                   _showSnackbar("Payment successful!", isSuccess: true);
+
+                  NavigationService().backtrack();
                 },
               );
             },
           );
         },
         onFailure: (failure) {
-          _showSnackbar(failure.message);
-          setState(() => _isLoading = false);
+          if (mounted) {
+            _showSnackbar(failure.message);
+            setState(() => _isLoading = false);
+          }
           return;
         },
       );
-
-      // if (result is ApiError) {
-      //   _showSnackbar((result as ApiError).message);
-      //   setState(() => _isLoading = false);
-      //   return;
-      // }
-
-      // final clientSecret = (result as ApiSuccess<PaymentResponse>).data;
-
-      // dPrint("clientSecret -> ${clientSecret.transactionId}");
-      // setState(() => _isLoading = false);
-
-      // Process payment with Stripe
-      // final paymentResult = await _paymentController.processPayment(
-      //   clientSecret: clientSecret.transactionId,
-      // );
-
-      // dPrint("Payment resutl -> $paymentResult");
-
-      // if (paymentResult is ApiError) {
-      //   _showSnackbar((paymentResult as ApiError).message);
-      //   return;
-      // }
-
-      // final paymentIntent = (paymentResult as ApiSuccess<PaymentIntent>).data;
-
-      // Confirm payment with backend
-      // final confirmResult = await _paymentController.confirmPayment(
-      //   paymentIntent.id,
-      // );
-
-      // setState(() => _isLoading = false);
-
-      // if (confirmResult is ApiError) {
-      //   _showSnackbar((confirmResult as ApiError).message);
-      //   return;
-      // }
-
-      // Payment successful
-      // _showSnackbar("Payment successful!", isSuccess: true);
-
-      if (mounted) {
-        NavigationService().backtrack();
-      }
     } catch (e) {
-      _showSnackbar("Payment failed: ${e.toString()}");
+      if (mounted) {
+        _showSnackbar("Payment failed: ${e.toString()}");
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -442,6 +412,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
   Future<void> _processSubscriptionPayment() async {
     // Implement subscription payment logic
+    if (!mounted) return;
     SnackbarUtils.showSnackbar(
       context,
       message: "Subscription payment not implemented yet",

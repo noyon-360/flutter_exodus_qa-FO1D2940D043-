@@ -21,20 +21,22 @@ Future<String?> showLocationBottomSheet(
               child: CircularProgressIndicator(),
             ),
           )
-          : ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: routes.length,
-            itemBuilder: (context, index) {
-              final route = routes[index];
-              return ListTile(
-                title: Text(route, style: AppText.bodyMedium),
-                onTap: () {
-                  // NavigationService().sailTo(route);
-                  Navigator.pop(context, route);
-                },
-              );
-            },
-            separatorBuilder: (_, __) => Divider(color: AppColors.secondary),
+          : SafeArea(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: routes.length,
+              itemBuilder: (context, index) {
+                final route = routes[index];
+                return ListTile(
+                  title: Text(route, style: AppText.bodyMedium),
+                  onTap: () {
+                    // NavigationService().sailTo(route);
+                    Navigator.pop(context, route);
+                  },
+                );
+              },
+              separatorBuilder: (_, __) => Divider(color: AppColors.secondary),
+            ),
           );
     },
   );

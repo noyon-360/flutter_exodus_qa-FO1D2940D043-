@@ -26,7 +26,7 @@ class CreateTicketRepositoryImpl implements CreateTicketRepository {
         "busNumber": busNumber,
         "source": source,
         "destination": destination,
-        "date": date.toIso8601String(),
+        "date": date.toUtc().toIso8601String(),
       },
       fromJsonT: (json) => TicketModel.fromJson(json),
     );

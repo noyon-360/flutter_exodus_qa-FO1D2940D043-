@@ -66,13 +66,13 @@ class ListOfRoutsController extends BaseController {
   Future<List<AvailableShuttle>> getAvailableShuttles(
     String from,
     String to,
-    DateTime date,
+    String date,
   ) async {
     setLoading(true);
     final query = ShuttleQuery(
       from: from,
       to: to,
-      date: date.toIso8601String(),
+      date: date,
     );
     final result = await _getAvailableShuttlesUseCase.call(query);
     setLoading(false);

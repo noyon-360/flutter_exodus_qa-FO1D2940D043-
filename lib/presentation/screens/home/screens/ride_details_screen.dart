@@ -169,9 +169,9 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
                   _rideInfoRow(
                     Icons.directions_bus,
                     "Bus",
-                    nextTicket.busNumber,
+                    nextTicket.bus.busNumber,
                   ),
-                  Gap.h16,
+                  Gap.h18,
                   _rideInfoRow(Icons.event_seat, "Seat", nextTicket.seatNumber),
                   Gap.h16,
                   _rideInfoRow(

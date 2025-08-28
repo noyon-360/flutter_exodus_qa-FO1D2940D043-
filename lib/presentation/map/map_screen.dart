@@ -27,8 +27,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    busId = widget.tickets.first.busNumber;
-    
+    busId = widget.tickets.first.bus.id;
+
     _initLocationService();
   }
 

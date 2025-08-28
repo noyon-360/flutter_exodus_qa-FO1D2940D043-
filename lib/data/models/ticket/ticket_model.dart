@@ -1,9 +1,12 @@
+import 'package:exodus/core/utils/debug_logger.dart';
+import 'package:exodus/data/models/bus/available_bus_response.dart';
+
 class TicketModel {
   final String id;
   final String scheduleId;
   final String userId;
   final double price;
-  final String busNumber;
+  final Bus bus;
   final String seatNumber;
   final String source;
   final String destination;
@@ -20,7 +23,7 @@ class TicketModel {
     required this.scheduleId,
     required this.userId,
     required this.price,
-    required this.busNumber,
+    required this.bus,
     required this.seatNumber,
     required this.source,
     required this.destination,
@@ -33,6 +36,7 @@ class TicketModel {
     required this.key,
   });
   factory TicketModel.fromJson(Map<String, dynamic> json) {
+    dPrint("Bus Number -> $json");
     return TicketModel(
       id: json['_id'] ?? '',
       scheduleId:
@@ -44,10 +48,10 @@ class TicketModel {
               ? json['userId']['_id'] ?? ''
               : json['userId'] ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      busNumber:
-          json['busNumber'] is Map<String, dynamic>
-              ? json['busNumber']['_id'] ?? ''
-              : json['busNumber'] ?? '',
+      bus: Bus.fromJson(json['busNumber'] ?? {}),
+      // json['busNumber'] is Map<String, dynamic>
+      //     ? json['busNumber']['_id'] ?? ''
+      //     : json['busNumber'] ?? '',
       seatNumber: json['seatNumber'] ?? '',
       source: json['source'] ?? '',
       destination: json['destination'] ?? '',
@@ -71,7 +75,7 @@ class TicketModel {
       'schedule': scheduleId,
       'userId': userId,
       'price': price,
-      'busNumber': busNumber,
+      'busNumber': bus,
       'seatNumber': seatNumber,
       'source': source,
       'destination': destination,

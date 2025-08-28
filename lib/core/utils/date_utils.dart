@@ -34,13 +34,21 @@ class DateUtilsForThirtyDays {
   }
 
   /// Converts a day index (0 = today, 1 = tomorrow, etc.) into a UTC ISO 8601 string
-static String getUtcDateStringFromIndex(int index) {
-  final today = DateTime.now();
-  final target = today.add(Duration(days: index));
-  final utcDate = DateTime.utc(target.year, target.month, target.day);
-  return utcDate.toIso8601String(); // Returns: '2025-05-24T00:00:00.000Z'
-}
-
+  static String getUtcDateStringFromIndex(int index) {
+    final today = DateTime.now();
+    final target = today.add(Duration(days: index));
+    // Set time to 08:00:00 in local time
+    final dateWithTime = DateTime(
+      target.year,
+      target.month,
+      target.day,
+      8,
+      0,
+      0,
+    );
+    // Format as 'yyyy-MM-ddTHH:mm:ss'
+    return DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(dateWithTime);
+  }
 
   /// Checks if two dates are the same day (ignores time)
   static bool isSameDay(DateTime a, DateTime b) {
